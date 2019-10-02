@@ -1,0 +1,12 @@
+ansible all -m shell -a 'hostname -i'
+ansible all --become --ask-become-pass -m apt -a "name=git state=latest"
+ansible webservers --become --ask-become-pass -m apt -a "name=apache2 state=latest"
+ansible lbserver --become --ask-become-pass -m apt -a "name=nginx state=latest"
+ansible webservers  --become --ask-become-pass -m copy -a "src=/home/ansible/index.html dest=/var/www/html"
+ansible lbserver --become --ask-become-pass -m apt -a "name=mysql-server state=latest"
+ansible dbserver --become --ask-become-pass -m apt -a "name=mysql-server-5.7 state=latest update_cache=yes"
+ansible all -m group --become --ask-become-pass -a "name=devops state=present"
+ansible all -m user --become --ask-become-pass -a "name=glopez comment='Guillermo Lopez Langarica' groups=devops shell=/bin/sh"
+ansible all -m blockinfile --become --ask-become-pass -a "path=/etc/sudoers block='glopez ALL=(ALL) NOPASSWD: ALL'"
+ansible all -m setup -a "filter=ansible_all_ipv4_addresses*"
+
